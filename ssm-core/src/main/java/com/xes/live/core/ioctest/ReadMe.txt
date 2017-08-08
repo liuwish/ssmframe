@@ -2,5 +2,11 @@
 1、循环依赖注入
 在普通的对象循环依赖过程中，系统最终会内存溢出报错。
 Spring框架处理的方式：
-构造器循环依赖
-Spring容器会将每一个正在创建的Bean标识符放在一个“当前正在创建的Bean池中”，如果在构建bean的过程中发现自己已经在池中，就会报BeanCurrentlyInCreationException循环依赖错误
+1）构造器循环依赖
+Spring容器会将每一个正在创建的Bean标识符放在一个“当前正在创建的Bean池中”，如果在构建bean的过程中发现自己已经在池中，
+就会报BeanCurrentlyInCreationException循环依赖错误
+2）setter方式单例，默认方式
+先实例化对象，然后再设置依赖（map缓存）
+3）setter方式原型，prototype
+对于“prototype”作用域Bean，Spring容器无法完成依赖注入，因为“prototype”作用域的Bean，Spring容
+  器不进行缓存，因此无法提前暴露一个创建中的Bean。
