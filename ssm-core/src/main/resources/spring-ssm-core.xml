@@ -2,6 +2,24 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
      <context:component-scan base-package="com.xes.live.*"/>
+     <!--<mvc:annotation-driven/>-->
+     <!-- 扫描指定包带@Controller注解的类-->
+     <context:component-scan base-package="com.xes.live.*"></context:component-scan>
+
+     <!-- 完成请求和注解POJO的映射 -->
+     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+     <bean id="audience" class="com.xes.live.core.AopTest.Audience"></bean>
+     <!--<bean id="lookFilm" class="com.xes.live.core.AopTest.impl.LookFilmImpl"></bean>-->
+     <aop:config>
+          <aop:aspect ref="audience">
+               <aop:pointcut id="mupointcut" expression="execution(* com.xes.live.core.ioctest.*.sayHelloWorld(..) ) ||execution(* com.xes.live.core.AopBusiness.*.lookFilm(..) )"></aop:pointcut>
+               <aop:before  method="silenceCellPhones" pointcut-ref="mupointcut"></aop:before>
+               <aop:after   method="takeSeats" pointcut-ref="mupointcut"></aop:after>
+               <aop:after-returning method="applause" pointcut-ref="mupointcut"></aop:after-returning>
+              <aop:after-throwing method="demandRefund" pointcut-ref="mupointcut" ></aop:after-throwing>
+          </aop:aspect>
+     </aop:config>
 </beans>
