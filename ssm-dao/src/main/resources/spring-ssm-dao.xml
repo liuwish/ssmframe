@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/data/jpa
+    	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+    	http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd">
+    <jpa:repositories base-package="com.xes.live.dao" />
+    <util:properties id="server" location="classpath:server.properties" />
+    <bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="name" value="masterDataSource" />
+        <property name="url" value="#{server['master.jdbc.url']}" />
+        <property name="username" value="#{server['master.jdbc.username']}" />
+        <property name="password" value="#{server['master.jdbc.password']}" />
+
+        <!-- 配置初始化大小、最小、最大 -->
+        <!-- 初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="initialSize" value="5" />
+        <!-- 连接池中保留的最小连接数 -->
+        <property name="minIdle" value="3" />
+        <!-- 连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxActive" value="20" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <!-- 当连接池用完时客户端调用getConnection()后等待获取新连接的时间,超时后将抛出 SQLException,如设为0则无限期等待。单位毫秒。Default: 	0 -->
+        <property name="maxWait" value="60000" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <!-- 最大空闲时间,36000秒(10小时)内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <!-- 定期使用连接池内的连接，使得它们不会因为闲置超时而被 MySQL 断开 修复8小时问题。  -->
+        <property name="validationQuery" value="SELECT 'x'" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <!-- 打开removeAbandoned功能 -->
+        <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="true" />
+        <!-- 超时时间；单位为秒。60*60*2秒=2小时 -->
+        <property name="removeAbandonedTimeout" value="7200" />
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="true" />
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小,mysql 不使用 -->
+        <property name="poolPreparedStatements" value="false" />
+        <!-- 配置监控统计拦截的filters -->
+        <!-- 慢查询sql打印 -->
+        <!--
+        <property name="filters" value="stat" />
+        <property name="connectionProperties"	value="druid.stat.slowSqlMillis=2000;druid.stat.logSlowSql=true" />
+         -->
+    </bean>
+
+    <bean id="slaveDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="name" value="slaveDataSource" />
+        <property name="url" value="#{server['slave.jdbc.url']}" />
+        <property name="username" value="#{server['slave.jdbc.username']}" />
+        <property name="password" value="#{server['slave.jdbc.password']}" />
+        <!-- 配置初始化大小、最小、最大 -->
+        <!-- 初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="initialSize" value="5" />
+        <!-- 连接池中保留的最小连接数 -->
+        <property name="minIdle" value="3" />
+        <!-- 连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxActive" value="20" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <!-- 当连接池用完时客户端调用getConnection()后等待获取新连接的时间,超时后将抛出 SQLException,如设为0则无限期等待。单位毫秒。Default: 	0 -->
+        <property name="maxWait" value="60000" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <!-- 最大空闲时间,36000秒(10小时)内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <!-- 定期使用连接池内的连接，使得它们不会因为闲置超时而被 MySQL 断开 修复8小时问题。  -->
+        <property name="validationQuery" value="SELECT 'x'" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <!-- 打开removeAbandoned功能 -->
+        <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="true" />
+        <!-- 超时时间；单位为秒。60*60*2秒=2小时 -->
+        <property name="removeAbandonedTimeout" value="7200" />
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="true" />
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小,mysql 不使用 -->
+        <property name="poolPreparedStatements" value="false" />
+        <!-- 配置监控统计拦截的filters -->
+        <!-- 慢查询sql打印 -->
+        <!--
+        <property name="filters" value="stat" />
+        <property name="connectionProperties"	value="druid.stat.slowSqlMillis=2000;druid.stat.logSlowSql=true" />
+         -->
+    </bean>
+
+    <!-- 动态数据源 -->
+    <bean id="dynamicDataSource" class="com.xes.live.dao.dbroute.DbRouteDataSource">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry key="masterDataSource" value-ref="masterDataSource" />
+                <entry key="slaveDataSource" value-ref="slaveDataSource" />
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="masterDataSource"/>
+    </bean>
+
+    <!-- 实体扫描并生成Repository -->
+    <bean id="hibernateJpaVendorAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="#{server['hibernate.dialect']}" />
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dynamicDataSource" />
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter" />
+        <property name="packagesToScan">
+            <list>
+                <value>com.xes.live.dao.entity</value>
+            </list>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <!-- 命名规则 My_NAME->MyName 自动更新数据库表结构（仅适用于开发阶段，正式运行后最好是手动维护数据库表结构） -->
+                <!-- <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop> -->
+                <prop key="hibernate.hbm2ddl.auto">#{server['hibernate.hbm2ddl.auto']}</prop>
+                <prop key="hibernate.show_sql">#{server['hibernate.show_sql']}</prop>
+                <prop key="hibernate.format_sql">#{server['hibernate.format_sql']}</prop>
+                <prop key="hibernate.enable_lazy_load_no_trans">#{server['hibernate.enable_lazy_load_no_trans']}</prop>
+            </props>
+        </property>
+    </bean>
+</beans>
